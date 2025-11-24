@@ -1,0 +1,62 @@
+# ===== C++ Build Files =====
+*.o
+*.obj
+*.exe
+*.out
+*.a
+*.so
+*.dll
+*.lib
+
+# ===== C/C++ IDE Specific =====
+*.vcxproj*
+*.sln
+*.cache
+*.user
+*.opensdf
+*.suo
+
+# ===== Python (pycache, venv, vs.) =====
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pdb
+*.egg-info/
+build/
+dist/
+env/
+venv/
+.venv/
+
+# ===== Assembly (MPLAB / MPASM / XC8 build outputs) =====
+*.lst
+*.hex
+*.cod
+*.map
+*.cof
+*.d
+*.p1
+*.p2
+*.i
+*.as
+*.o
+
+# MPLABX specific
+nbproject/private/
+build/
+dist/
+*.dependent
+*.pre
+*.obj
+
+# ===== VSCode =====
+.vscode/
+.history/
+
+# ===== OS Files =====
+.DS_Store
+Thumbs.db
+
+# ===== Logs =====
+*.log
