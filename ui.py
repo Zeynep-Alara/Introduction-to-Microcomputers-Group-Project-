@@ -11,7 +11,7 @@ class HomeAutomationUI(ctk.CTk):
         super().__init__()
 
         self.title("Home Automation Panel")
-        self.geometry("600x420")
+        self.geometry("600x500")
         self.resizable(False, False)
 
         # MAIN FRAME
@@ -27,12 +27,12 @@ class HomeAutomationUI(ctk.CTk):
         self.connect_btn = ctk.CTkButton(conn_frame, text="Connect", width=120, command=self.connect)
         self.connect_btn.grid(row=0, column=0, padx=5)
 
-        self.disconnect_btn = ctk.CTkButton(conn_frame, text="Disconnect", width=120, state="disabled", 
+        self.disconnect_btn = ctk.CTkButton(conn_frame, text="Disconnect", width=120, state="disabled",
                                             fg_color="gray30", command=self.disconnect)
         self.disconnect_btn.grid(row=0, column=1, padx=5)
 
         # Tabs
-        self.tabview = ctk.CTkTabview(self.main_frame, width=520, height=290)
+        self.tabview = ctk.CTkTabview(self.main_frame, width=520, height=350)
         self.tabview.pack(pady=10)
 
         self.air_tab = self.tabview.add("Air Conditioner")
@@ -59,13 +59,16 @@ class HomeAutomationUI(ctk.CTk):
         except:
             pass
 
-    # -------------------- AIR CONDITIONER ---------------------
+    # =====================================================
+    # ---------------- AIR CONDITIONER UI -----------------
+    # =====================================================
     def build_air_ui(self):
         self.air = AirConditionerSystemConnection(self.conn)
 
         title = ctk.CTkLabel(self.air_tab, text="Air Conditioner Status", font=("Arial", 18))
         title.pack(pady=10)
 
+        # Values
         self.air_values = ctk.CTkFrame(self.air_tab)
         self.air_values.pack(pady=10)
 
@@ -73,8 +76,22 @@ class HomeAutomationUI(ctk.CTk):
         self.ambient_lbl = self.create_value_row(self.air_values, "Ambient Temp:")
         self.fan_lbl = self.create_value_row(self.air_values, "Fan Speed:")
 
+        # Update Button
         update_btn = ctk.CTkButton(self.air_tab, text="Update Values", width=150, command=self.update_air)
         update_btn.pack(pady=10)
+
+        # -------- SET DESIRED TEMP SECTION --------
+        set_frame = ctk.CTkFrame(self.air_tab)
+        set_frame.pack(pady=10)
+
+        set_label = ctk.CTkLabel(set_frame, text="Set Desired Temp:")
+        set_label.grid(row=0, column=0, padx=5)
+
+        self.temp_entry = ctk.CTkEntry(set_frame, width=80, placeholder_text="e.g. 25.5")
+        self.temp_entry.grid(row=0, column=1, padx=5)
+
+        set_btn = ctk.CTkButton(set_frame, text="Send", width=80, command=self.set_desired_temp)
+        set_btn.grid(row=0, column=2, padx=5)
 
     def update_air(self):
         self.air.update()
@@ -82,7 +99,17 @@ class HomeAutomationUI(ctk.CTk):
         self.ambient_lbl.configure(text=str(self.air.ambientTemperature))
         self.fan_lbl.configure(text=str(self.air.fanSpeed))
 
-    # -------------------- CURTAIN CONTROL ---------------------
+    def set_desired_temp(self):
+        try:
+            value = float(self.temp_entry.get())
+            self.air.setDesiredTemp(value)
+            print("Sent desired temp:", value)
+        except:
+            print("Invalid temperature input")
+
+    # =====================================================
+    # ---------------- CURTAIN CONTROL UI -----------------
+    # =====================================================
     def build_curtain_ui(self):
         self.curtain = CurtainControlSystemConnection(self.conn)
 
@@ -99,11 +126,32 @@ class HomeAutomationUI(ctk.CTk):
         update_btn = ctk.CTkButton(self.curtain_tab, text="Update Values", width=150, command=self.update_curtain)
         update_btn.pack(pady=10)
 
+        # -------- SET CURTAIN STATUS SECTION --------
+        set_frame = ctk.CTkFrame(self.curtain_tab)
+        set_frame.pack(pady=10)
+
+        set_label = ctk.CTkLabel(set_frame, text="Set Curtain %:")
+        set_label.grid(row=0, column=0, padx=5)
+
+        self.curtain_entry = ctk.CTkEntry(set_frame, width=80, placeholder_text="0-100")
+        self.curtain_entry.grid(row=0, column=1, padx=5)
+
+        set_btn = ctk.CTkButton(set_frame, text="Send", width=80, command=self.set_curtain_status)
+        set_btn.grid(row=0, column=2, padx=5)
+
     def update_curtain(self):
         self.curtain.update()
         self.outdoor_temp_lbl.configure(text=str(self.curtain.outdoorTemperature))
         self.outdoor_pressure_lbl.configure(text=str(self.curtain.outdoorPressure))
         self.light_lbl.configure(text=str(self.curtain.lightIntensity))
+
+    def set_curtain_status(self):
+        try:
+            value = float(self.curtain_entry.get())
+            self.curtain.setCurtainStatus(value)
+            print("Sent curtain status:", value)
+        except:
+            print("Invalid curtain % input")
 
     # -------------------- HELPER FUNCTION ---------------------
     def create_value_row(self, parent, label_text):
